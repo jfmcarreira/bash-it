@@ -32,8 +32,17 @@ function cluster_name ()
   fi
 }
 
+function show_battery ()
+{
+  if [ ! $($USER )== "no" ]
+  then
+    echo "${bold_red}[$(battery_char)] "
+  fi
+}
+
+
 function prompt_command() {
-  PS1="\n${bold_red}[$(battery_char)] $(clock_only)${yellow}$(ruby_version_prompt) ${bright_green}\u@\h$(cluster_name) ${bright_blue}\w $(scm_prompt_info)${bright_blue}\$${reset_color} "
+  PS1="\n$(show_battery)$(clock_only)${yellow}$(ruby_version_prompt) ${bright_green}\u@\h$(cluster_name) ${bright_blue}\w$(scm_prompt_info)${bright_blue} \$${reset_color} "
 }
 
 PROMPT_COMMAND="prompt_command;"
