@@ -377,6 +377,13 @@ function clock_char {
     fi
 }
 
+function clock_only {
+    if [[ "${THEME_CLOCK_CHECK}" = true ]]; then
+        DATE_STRING=$(date +"%H:%M:%S")
+        echo -e "${bold_cyan}$DATE_STRING"
+    fi
+}
+
 function battery_char {
     if [[ "${THEME_BATTERY_PERCENTAGE_CHECK}" = true ]]; then
         echo -e "${bold_red}$(battery_percentage)%"
