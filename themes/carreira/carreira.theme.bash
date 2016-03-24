@@ -33,7 +33,7 @@ function cluster_name ()
 }
 
 function prompt_command() {
-  PS1="\n$(battery_char)$(clock_only)${yellow}$(ruby_version_prompt) ${bright_green}\u@\h$(cluster_name) ${bright_blue}\w ${green}$(scm_prompt_info)${bright_blue}\$${reset_color} "
+  PS1="\n${bold_red}[$(battery_char)] $(clock_only)${yellow}$(ruby_version_prompt) ${bright_green}\u@\h$(cluster_name) ${bright_blue}\w $(scm_prompt_info)${bright_blue}\$${reset_color} "
 }
 
 PROMPT_COMMAND="prompt_command;"
