@@ -34,9 +34,10 @@ function cluster_name ()
 
 function show_battery ()
 {
-  if [ ! $($USER )== "no" ]
+  local _bat=$(battery_char)
+  if [ ! ${_bat} == "no" ]
   then
-    echo "${bold_red}[$(battery_char)] "
+    echo "${bold_red}[${_bat}] "
   fi
 }
 
