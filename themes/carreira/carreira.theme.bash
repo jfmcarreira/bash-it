@@ -25,9 +25,9 @@ function cluster_name ()
   then
     if [ $( hostname ) == "athena" ]
     then
-      echo -e " ${bright_cyan}(IT)"
+      echo -e " ${bold_bright_cyan}(IT)"
     else
-      echo -e " ${bright_yellow}(IT)"
+      echo -e " ${bold_bright_yellow}(IT)"
     fi
   fi
 }
@@ -43,7 +43,7 @@ function show_battery ()
 
 
 function prompt_command() {
-  PS1="\n$(show_battery)$(clock_only)${yellow}$(ruby_version_prompt) ${bright_green}\u@\h$(cluster_name) ${bright_blue}\w$(scm_prompt_info)${bright_blue} \$${reset_color} "
+  PS1="\n$(show_battery)$(clock_only) ${bold_bright_green}\u@\h$(cluster_name) ${bold_bright_blue}\w$(scm_prompt_info)${bold_bright_blue} \$${reset_color}${normal} "
 }
 
 PROMPT_COMMAND="prompt_command;"

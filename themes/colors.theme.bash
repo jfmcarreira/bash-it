@@ -211,6 +211,13 @@ bold_cyan="$(color cyan bold)"
 bold_white="$(color white bold)"
 bold_orange="$(color red fg bright bold)"
 
+bold_bright_red="$(color red bold)"
+bold_bright_green="$(color green bold)"
+bold_bright_yellow="$(color yellow bold)"
+bold_bright_blue="$(color blue bold)"
+bold_bright_purple="$(color magenta bold)"
+bold_bright_cyan="$(color cyan bold)"
+
 underline_black="$(color black underline)"
 underline_red="$(color red underline)"
 underline_green="$(color green underline)"
