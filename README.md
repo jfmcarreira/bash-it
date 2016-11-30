@@ -19,10 +19,14 @@ Bash-it provides a solid framework for using, developing and maintaining shell s
 The install script can take the following options:
 
 * `--interactive`: Asks the user which aliases, completions and plugins to enable.
+* `--silent`: Ask nothing and install using default settings.
+* `--no-modify-config`: Do not modify the existing config file (`~/.bash_profile` or `~/.bashrc`).
 
 When run without the `--interactive` switch, Bash-it only enables a sane default set of functionality to keep your shell clean and to avoid issues with missing dependencies. Feel free to enable the tools you want to use after the installation.
 
-**NOTE**: Keep in mind how Bash load its configuration files, `.bash_profile` for login shells (and in Mac OS X in terminal emulators like [Termminal.app](http://www.apple.com/osx/apps/) or [iTerm2](https://www.iterm2.com/)) and `.bashrc` for interactive shells (default mode in most of the GNU/Linux terminal emulators), to ensure that Bash-it is loaded correctly. A good "practice" is sourcing `.bashrc` into `.bash_profile` to keep things working in all the scenarios, to achieve this, you can add this snippet in your `.bash_profile`:
+When you run without the `--no-modify-config` switch, the Bash-it installer automatically modifies/replaces your existing config file. Use the `--no-modify-config` switch to avoid unwanted modifications, e.g. if your Bash config file already contains the code that loads Bash-it.
+
+**NOTE**: Keep in mind how Bash load its configuration files, `.bash_profile` for login shells (and in Mac OS X in terminal emulators like [Terminal.app](http://www.apple.com/osx/apps/) or [iTerm2](https://www.iterm2.com/)) and `.bashrc` for interactive shells (default mode in most of the GNU/Linux terminal emulators), to ensure that Bash-it is loaded correctly. A good "practice" is sourcing `.bashrc` into `.bash_profile` to keep things working in all the scenarios, to achieve this, you can add this snippet in your `.bash_profile`:
 
 ```
 if [ -f ~/.bashrc ]; then
@@ -56,25 +60,61 @@ bash-it help plugins        # shows help for installed plugins
 ## Search
 
 If you need to quickly find out which of the plugins, aliases or completions
-are available for a specific task or an environment, you can search for 
-multiple terms related to the commands you use frequently.  Search will 
-find and output modules with the name or description matching the terms 
+are available for a specific framework, programming language, or an environment, you can _search_ for
+multiple terms related to the commands you use frequently.  Search will
+find and print out modules with the name or description matching the terms
 provided.
 
-```
-bash-it search term1 [term2] [term3]....
+#### Syntax
+
+```bash
+  bash-it search term1 [[-]term2] [[-]term3]....
 ```
 
-For example, if you are a ruby developer, you might want to enable everything 
-related to the commands such as `ruby`, `rake`, `gem`, `bundler` and `rails`. 
-Search command helps you find related modules, so that you can decide which 
+As an example, a ruby developer might want to enable everything
+related to the commands such as `ruby`, `rake`, `gem`, `bundler` and `rails`.
+Search command helps you find related modules, so that you can decide which
 of them you'd like to use:
 
+```bash
+❯ bash-it search ruby rake gem bundle irb rails
+      aliases:  bundler rails
+      plugins:  chruby chruby-auto ruby
+  completions:  bundler gem rake
 ```
-> bash-it search ruby rake gem bundle irb rails
-aliases     : bundler rails
-plugins     : chruby chruby-auto ruby
-completions : bundler gem rake
+
+Currently enabled modules will be shown in green.
+
+#### Search with Negations
+
+You can prefix a search term with a "-" to exclude it from the results. In the above
+example, if we wanted to hide `chruby` and `chruby-auto`, we could change the command as
+follows:
+
+```bash
+❯ bash-it search ruby rake gem bundle irb rails -chruby
+      aliases:  bundler rails
+      plugins:  ruby
+  completions:  bundler gem rake
+```
+
+#### Using Search to Enable or Disable Components
+
+By adding a `--enable` or `--disable` to the search command, you can automatically
+enable all modules that come up as a result of a search query. This could be quite
+handy if you like to enable a bunch of components related to the same topic.
+
+#### Disabling ASCII Color
+
+To remove non-printing non-ASCII characters responsible for the coloring of the
+search output, you can set environment variable `NO_COLOR`. Enabled components will
+then be shown with a checkmark:
+
+```bash
+❯ NO_COLOR=1 bash-it search ruby rake gem bundle irb rails -chruby
+      aliases  =>   ✓bundler ✓rails
+      plugins  =>   ✓ruby
+  completions  =>   bundler gem rake
 ```
 
 ## Your Custom scripts, aliases, themes, and functions
@@ -88,6 +128,8 @@ For custom scripts, and aliases, just create the following files (they'll be ign
 * `custom/themes/<custom theme name>/<custom theme name>.theme.bash`
 
 Anything in the custom directory will be ignored, with the exception of `custom/example.bash`.
+
+Alternately, if you would like to keep your custom scripts under version control, you can set BASH_IT_CUSTOM in your `~/.bashrc` to another location outside of the `~/.bash_it` folder.
 
 ## Themes
 
@@ -120,6 +162,8 @@ Please take a look at the [Contribution Guidelines](CONTRIBUTING.md) before repo
 
 Bash-it creates a `reload` alias that makes it convenient to reload
 your Bash profile when you make changes.
+
+Additionally, if you export BASH_IT_AUTOMATIC_RELOAD_AFTER_CONFIG_CHANGE as a non-null value, Bash-it will automatically reload itself after activating or deactivating plugins, aliases, or completions.
 
 ### Prompt Version Control Check
 

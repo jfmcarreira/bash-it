@@ -16,6 +16,8 @@ RVM_THEME_PROMPT_SUFFIX="|"
 SCM_THEME_BRANCH_TRACK_PREFIX=' -> '
 SCM_THEME_BRANCH_GONE_PREFIX=' -> '
 
+THEME_CLOCK_CHECK=true
+
 function cluster_name ()
 {
   if [ $USER == "lljfmc" ]
@@ -43,7 +45,7 @@ function show_battery ()
 
 
 function prompt_command() {
-  PS1="\n$(show_battery)$(clock_only) ${bold_bright_green}\u@\h$(cluster_name) ${bold_bright_blue}\w$(scm_prompt_info)${bold_bright_blue} \$${reset_color}${normal} "
+  PS1="\n$(show_battery)$(clock_only) $(color green bold)\u@\h$(cluster_name) $(color blue bold)\w$(scm_prompt_info) $(color blue bold)\$${reset_color}${normal} "
 }
 
 PROMPT_COMMAND="prompt_command;"

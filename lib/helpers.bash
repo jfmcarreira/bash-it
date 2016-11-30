@@ -1,17 +1,16 @@
 # Helper function loading various enable-able files
 function _load_bash_it_files() {
   subdirectory="$1"
-  if [ ! -d "${BASH_IT}/${subdirectory}/enabled" ]
+  if [ -d "${BASH_IT}/${subdirectory}/enabled" ]
   then
-    continue
+    FILES="${BASH_IT}/${subdirectory}/enabled/*.bash"
+    for config_file in $FILES
+    do
+      if [ -e "${config_file}" ]; then
+        source $config_file
+      fi
+    done
   fi
-  FILES="${BASH_IT}/${subdirectory}/enabled/*.bash"
-  for config_file in $FILES
-  do
-    if [ -e "${config_file}" ]; then
-      source $config_file
-    fi
-  done
 }
 
 # Function for reloading aliases
@@ -40,7 +39,7 @@ bash-it ()
     example '$ bash-it enable plugin git [tmux]...'
     example '$ bash-it disable alias hg [tmux]...'
     example '$ bash-it update'
-    example '$ bash-it search ruby [rake]...'
+    example '$ bash-it search ruby [[-]rake]... [--enable | --disable]'
     typeset verb=${1:-}
     shift
     typeset component=${1:-}
@@ -127,8 +126,11 @@ _bash-it_update() {
   _group 'lib'
 
   cd "${BASH_IT}"
+  if [ -z $BASH_IT_REMOTE ]; then
+    BASH_IT_REMOTE="origin"
+  fi
   git fetch &> /dev/null
-  local status="$(git rev-list master..origin/master 2> /dev/null)"
+  local status="$(git rev-list master..${BASH_IT_REMOTE}/master 2> /dev/null)"
   if [[ -n "${status}" ]]; then
     git pull --rebase &> /dev/null
     if [[ $? -eq 0 ]]; then
@@ -141,60 +143,6 @@ _bash-it_update() {
     echo "Bash-it is up to date, nothing to do!"
   fi
   cd - &> /dev/null
-}
-
-# This function returns list of aliases, plugins and completions in bash-it,
-# whose name or description matches one of the search terms provided as arguments.
-#
-# Usage:
-#    ❯ bash-it search term1 [term2]...
-# Example:
-#    ❯ bash-it search ruby rbenv rvm gem rake
-#  aliases: bundler
-#  plugins: chruby chruby-auto rbenv ruby rvm
-#  completions: gem rake
-#
-
-_bash-it-search() {
-  _about 'searches for given terms amongst bash-it plugins, aliases and completions'
-  _param '1: term1'
-  _param '2: [ term2 ]...'
-  _example '$ _bash-it-search ruby rvm rake bundler'
-
-  declare -a _components=(aliases plugins completions)
-  for _component in "${_components[@]}" ; do
-    _bash-it-search-component  "${_component}" "$*"
-  done
-}
-
-_bash-it-search-component() {
-  _about 'searches for given terms amongst a given component'
-  _param '1: component type, one of: [ aliases | plugins | completions ]'
-  _param '2: term1'
-  _param '3: [ term2 ]...'
-  _example '$ _bash-it-search-component aliases rake bundler'
-
-  _component=$1
-  local func=_bash-it-${_component}
-  local help=$($func)
-
-  shift
-  declare -a terms=($@)
-  declare -a matches=()
-  local _grep=$(which egrep || which grep)
-  for term in "${terms[@]}"; do
-    local term_match=($(echo "${help}"| ${_grep} -i -- ${term} | cut -d ' ' -f 1  | tr '\n' ' '))
-    [[ "${#term_match[@]}" -gt 0 ]] && {
-      matches=(${matches[@]} ${term_match[@]})
-    }
-  done
-  [[ -n "$NO_COLOR" && color_on="" ]]  || color_on="\e[1;32m"
-  [[ -n "$NO_COLOR" && color_off="" ]] || color_off="\e[0;0m"
-
-  if [[ "${#matches[*]}" -gt 0 ]] ; then
-    printf "%-12s: ${color_on}%s${color_off}\n" "${_component}" "$(echo -n ${matches[*]} | tr ' ' '\n' | sort | uniq | tr '\n' ' ' | sed 's/ $//g')"
-  fi
-  unset matches
 }
 
 _bash-it-describe ()
@@ -294,6 +242,10 @@ _disable-thing ()
         rm $BASH_IT/$subdirectory/enabled/$(basename $plugin)
     fi
 
+    if [ -n "$BASH_IT_AUTOMATIC_RELOAD_AFTER_CONFIG_CHANGE" ]; then
+        exec ${0/-/}
+    fi
+
     printf '%s\n' "$file_entity disabled."
 }
 
@@ -372,6 +324,10 @@ _enable-thing ()
         ln -s ../available/$plugin $BASH_IT/$subdirectory/enabled/$plugin
     fi
 
+    if [ -n "$BASH_IT_AUTOMATIC_RELOAD_AFTER_CONFIG_CHANGE" ]; then
+        exec ${0/-/}
+    fi
+
     printf '%s\n' "$file_entity enabled."
 }
 
@@ -391,17 +347,31 @@ _help-aliases()
     _example '$ alias-help git'
 
     if [ -n "$1" ]; then
-        cat $BASH_IT/aliases/available/$1.aliases.bash | metafor alias | sed "s/$/'/"
+        case $1 in
+            custom)
+                alias_path='custom.aliases.bash'
+            ;;
+            *)
+                alias_path="available/$1.aliases.bash"
+            ;;
+        esac
+        cat $BASH_IT/aliases/$alias_path | metafor alias | sed "s/$/'/"
     else
         typeset f
         for f in $BASH_IT/aliases/enabled/*
         do
-            typeset file=$(basename $f)
-            printf '\n\n%s:\n' "${file%%.*}"
-            # metafor() strips trailing quotes, restore them with sed..
-            cat $f | metafor alias | sed "s/$/'/"
+            _help-list-aliases $f
         done
+        _help-list-aliases $BASH_IT/aliases/custom.aliases.bash
     fi
+}
+
+_help-list-aliases ()
+{
+    typeset file=$(basename $1)
+    printf '\n\n%s:\n' "${file%%.*}"
+    # metafor() strips trailing quotes, restore them with sed..
+    cat $1 | metafor alias | sed "s/$/'/"
 }
 
 _help-plugins()
@@ -463,7 +433,7 @@ if ! type pathmunge > /dev/null 2>&1
 then
   function pathmunge () {
     about 'prevent duplicate directories in you PATH variable'
-    group 'lib helpers'
+    group 'helpers'
     example 'pathmunge /path/to/dir is equivalent to PATH=/path/to/dir:$PATH'
     example 'pathmunge /path/to/dir after is equivalent to PATH=$PATH:/path/to/dir'
 
