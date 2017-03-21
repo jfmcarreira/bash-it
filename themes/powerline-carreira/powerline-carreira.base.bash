@@ -52,9 +52,9 @@ function __powerline_carreira_user_info_prompt {
       fi
       ;;
   esac
-#   if [[ "$USER" == ${CLUSTER_INFO_USER_THEME_PROMPT_COLOR} ]]; then
-#     color=${CLUSTER_INFO_THEME_PROMPT_COLOR}
-#   then
+  if [[ "$USER" == "${CLUSTER_INFO_USER_THEME_PROMPT_COLOR}" ]]; then
+    color=${CLUSTER_INFO_THEME_PROMPT_COLOR}
+  fi
   [[ -n "${user_info}" ]] && echo "${user_info}|${color}"
 }
 
