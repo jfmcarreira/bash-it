@@ -12,46 +12,21 @@ function set_color {
   echo -e "\[\033[${fg}${bg}m\]"
 }
 
-# function __powerline_carreira_cluster_name_prompt {
-#   local __hostname=$( hostname )
-#
-#   if [ $USER == "lljfmc" ]
-#   then
-#     echo -e " ${bright_yellow}(HPC)"
-#   elif [ $USER == "jcarreira.it" ]
-#   then
-#     if [ $__hostname == "orion" ]
-#     then
-#       echo -e " ${bold_bright_cyan}(IT)"
-#     else
-#       echo -e " ${bold_bright_yellow}(IT)"
-#     fi
-#   fi
-# }
-
 function __powerline_carreira_user_info_prompt {
   local user_info=""
   local color=${USER_INFO_THEME_PROMPT_COLOR}
 
   if [[ "${THEME_CHECK_SUDO}" = true ]]; then
     if sudo -n uptime 2>&1 | grep -q "load"; then
-      color=${USER_INFO_THEME_PROMPT_COLOR_SUDO}
+      user_info="${USER_INFO_THEME_PROMPT_SUDO_CHAR}"
     fi
   fi
-  case "${POWERLINE_PROMPT_USER_INFO_MODE}" in
-    "sudo")
-      if [[ "${color}" == "${USER_INFO_THEME_PROMPT_COLOR_SUDO}" ]]; then
-        user_info="!"
-      fi
-      ;;
-    *)
-      if [[ -n "${SSH_CLIENT}" ]]; then
-        user_info="${USER_INFO_SSH_CHAR}${USER}@${HOSTNAME}"
-      else
-        user_info="${USER}"
-      fi
-      ;;
-  esac
+
+  if [[ -n "${SSH_CLIENT}" ]]; then
+    user_info="${user_info}${USER_INFO_SSH_CHAR}${USER}@${HOSTNAME}"
+  else
+    user_info="${user_info}${USER}"
+  fi
   if [[ "$USER" == "${CLUSTER_INFO_USER}" ]]; then
     color=${CLUSTER_INFO_THEME_PROMPT_COLOR}
   fi

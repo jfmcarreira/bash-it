@@ -28,9 +28,10 @@ This theme is pretty configurable, all the configuration is done by setting envi
 
 By default, the username and hostname are shown, but you can change this behavior by setting the value of the following variable:
 
-    POWERLINE_PROMPT_USER_INFO_MODE="sudo"
+    POWERLINE_PROMPT_USER_INFO_MODE="sudo" (Feature disabled)
 
 For now, the only supported value is `sudo`, which hides the username and hostname, and shows an indicator when `sudo` has the credentials cached. Other values have no effect at this time.
+
 
 ### Clock Format
 
