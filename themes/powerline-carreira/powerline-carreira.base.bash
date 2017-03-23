@@ -12,6 +12,12 @@ function set_color {
   echo -e "\[\033[${fg}${bg}m\]"
 }
 
+function __powerline_carreira_root_info_prompt {
+  local color=${ROOT_INFO_THEME_PROMPT_COLOR}
+  echo "${HOSTNAME}|${color}"
+}
+
+
 function __powerline_carreira_user_info_prompt {
   local user_info=""
   local color=${USER_INFO_THEME_PROMPT_COLOR}
