@@ -88,7 +88,8 @@ function __powerline_carreira_scm_prompt {
 }
 
 function __powerline_carreira_cwd_prompt {
-  echo "$(pwd | sed "s|^${HOME}|~|")|${CWD_THEME_PROMPT_COLOR}"
+#   echo "$(pwd | sed "s|^${HOME}|~|")|${CWD_THEME_PROMPT_COLOR}"
+  echo "\W|${CWD_THEME_PROMPT_COLOR}"
 }
 
 function __powerline_carreira_clock_prompt {
