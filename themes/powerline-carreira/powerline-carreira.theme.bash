@@ -10,6 +10,7 @@ POWERLINE_LEFT_SEPARATOR=${POWERLINE_LEFT_SEPARATOR:=""}
 POWERLINE_RIGHT_SEPARATOR=${POWERLINE_RIGHT_SEPARATOR:=""}
 POWERLINE_LEFT_END=${POWERLINE_LEFT_END:=""}
 POWERLINE_RIGHT_END=${POWERLINE_RIGHT_END:=""}
+
 POWERLINE_PADDING=${POWERLINE_PADDING:=2}
 
 CLUSTER_INFO_USER=jcarreira.it
@@ -69,4 +70,4 @@ else
   POWERLINE_RIGHT_PROMPT=${POWERLINE_RIGHT_PROMPT:="in_vim clock battery carreira_user_info"}
 fi
 
-safe_append_prompt_command __powerline_prompt_command
+safe_append_prompt_command __powerline_carreira_prompt_command

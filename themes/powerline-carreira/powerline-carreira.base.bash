@@ -33,8 +33,8 @@ function __powerline_carreira_user_info_prompt {
 
   if [[ -n "${SSH_CLIENT}" ]]; then
     user_info="${user_info}${USER_INFO_SSH_CHAR}${USER}@${HOSTNAME}"
-  else
-    user_info="${user_info}${USER}"
+#   else
+#     user_info="${user_info}${USER}"
   fi
   if [[ "$USER" == "${CLUSTER_INFO_USER}" ]]; then
     color=${CLUSTER_INFO_THEME_PROMPT_COLOR}
@@ -44,4 +44,9 @@ function __powerline_carreira_user_info_prompt {
 
 function __powerline_carreira_cwd_prompt {
   echo "$(pwd | sed "s|^${HOME}|~|")|${CWD_THEME_PROMPT_COLOR}"
+}
+
+function __powerline_carreira_prompt_command {
+  __powerline_prompt_command
+   PS1="\n$PS1"
 }
